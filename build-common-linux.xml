@@ -1,0 +1,228 @@
+<project name="iGeekBuildCommonLinux">
+	<description>
+        Common build file Linux definitions and tasks for iGeek, Inc.
+	</description>
+	<import file="../iGeekCommon/build-common.xml"/>
+	<path id="cc.cp">
+		<pathelement location="../iGeekCommon-Linux/antlibs/cpptasks.jar" />
+	</path>
+	<taskdef resource="cpptasks.tasks" loaderref="cc.loaderRef" classpathref="cc.cp" />
+	<typedef name="linker" classname="net.sf.antcontrib.cpptasks.LinkerDef" loaderref="cc.loaderRef" classpathref="cc.cp" />
+	<typedef name="compiler" classname="net.sf.antcontrib.cpptasks.CompilerDef" loaderref="cc.loaderRef" classpathref="cc.cp" />
+	<target name="setOSLibs">
+		<path id="osLibs">
+			<pathelement location="../iGeekCommon/output/lib/iGeekCommon.jar"/>
+		</path>
+	</target>
+	<target name="init" depends="iGeekBuildCommon.init, setOSLibs">
+		<property name="sourceTarFile" value="${debianBuild}/${debianPackageName}_${revision}.orig.tar.gz"/>
+		<property name="debianSrcDir" location="${output}/${debianPackageName}-${revision}"/>
+		<property name="debianPackageDir" location="${debianBuild}/${debianPackageName}-${revision}"/>
+		<property name="rpmBuildDir" location="${output}/rpmbuild"/>
+		<property name="rpmBuildBUILDDir" location="${rpmBuildDir}/BUILD"/>
+		<property name="rpmBuildRPMSDir" location="${rpmBuildDir}/RPMS"/>
+		<property name="rpmBuildSOURCESDir" location="${rpmBuildDir}/SOURCES"/>
+		<property name="rpmBuildSPECSDir" location="${rpmBuildDir}/SPECS"/>
+		<property name="rpmBuildSRPMSDir" location="${rpmBuildDir}/SRPMS"/>
+		<property environment="env" />
+		<fail unless="env.JAVA_HOME">Please set JAVA_HOME to jdk base directory. We need it to find include files</fail>
+		<!-- Create the time stamp -->
+		<tstamp />
+		<property name="nativeHeaders" location="${output}/nativeHeaders" />
+		<compiler id="linuxCompile" name="gcc">
+			<compilerarg value="-g"/>
+			<compilerarg value="-I"/>
+			<compilerarg value="${env.JAVA_HOME}/include"/>
+			<compilerarg value="-I"/>
+			<compilerarg value="${env.JAVA_HOME}/include/linux"/>
+		</compiler>
+		<linker id="linuxLinker">
+		</linker>
+		<mkdir dir="${nativeHeaders}" />
+	</target>
+	<target name="makeRPMBuildDir">
+		<mkdir dir="${rpmBuildDir}"/>
+		<mkdir dir="${rpmBuildBUILDDir}"/>
+		<mkdir dir="${rpmBuildRPMSDir}"/>
+		<mkdir dir="${rpmBuildSOURCESDir}"/>
+		<mkdir dir="${rpmBuildSPECSDir}"/>
+		<mkdir dir="${rpmBuildSRPMSDir}"/>
+	</target>
+	<target name="makeDebianSrcDir" depends="init">
+		<echo>Creating dir and copying source for ${srcDir}</echo>
+		<local name="dirName"/>
+		<basename property="dirName" file="${srcDir}"/>
+		<mkdir dir="${debianSrcDir}/${dirName}"/>
+		<exec executable="/usr/bin/rsync" dir="..">
+			<arg value="-aqz"/>
+			<arg value="${srcDir}"/>
+			<arg value="--exclude"/>
+			<arg value="bin"/>
+			<arg value="--exclude"/>
+			<arg value="output"/>
+			<arg value="--exclude"/>
+			<arg value=".svn"/>
+			<arg value="${debianSrcDir}"/>
+		</exec>
+	</target>
+	<!-- Debian likes it if we build a src tar and then create the debian package.  Fine!-->
+	<target name="srcTar" depends="init">
+		<echo>scrTar revision=${revision}</echo>
+		<mkdir dir="${debianSrcDir}"/>
+		<antcall target="makeDebianSrcDir">
+			<param name="srcDir" value="${basedir}"/>
+		</antcall>
+		<foreach target="makeDebianSrcDir" param="srcDir"> 
+			<path refid="cleanAllPath"/>
+		</foreach>
+		<delete file="${sourceTarFile}"/>
+		<exec executable="/bin/tar" dir="${output}">
+			<arg value="cfz"/>
+			<arg value="${sourceTarFile}"/>
+			<arg value="${debianPackageName}-${revision}"/>
+		</exec>
+	</target>
+	<target name="rpmPackage" depends="init, srcTar, makeRPMBuildDir" description="Builds the RPM package">
+		<copy tofile="${rpmBuildSOURCESDir}/${debianPackageName}-${revision}.tar.gz" file="${sourceTarFile}"/>
+		<copy todir="${rpmBuildSPECSDir}">
+			<fileset dir="RPMPackageResources/SPECS">
+				<include name="*.spec"/>
+			</fileset>
+			<filterset>
+				<filter token="REVISION" value="${revision}"/>
+			</filterset>
+		</copy>
+		<exec executable="/usr/bin/rpmbuild" failonerror="true">
+			<arg value="-vv"/>
+			<arg value="--define"/>
+			<arg value="_topdir ${rpmBuildDir}"/>
+			<arg value="-ba"/>
+			<arg value="${rpmBuildSPECSDir}/${rpmSpecFile}"/>
+		</exec>
+	</target>
+	<target name="debianPackage" depends="init, srcTar" description="Builds the debian package">
+		<exec executable="/bin/tar" dir="${debianBuild}">
+			<arg value="xf"/>
+			<arg value="${sourceTarFile}"/>
+		</exec>
+		<mkdir dir="${debianPackageDir}/debian"/>
+		<delete dir="${debianPackageDir}/debian" includes="**"/>
+		<exec executable="/usr/bin/dch" dir="${debianPackageDir}" failonerror="true">
+			<env key="DEBEMAIL" value="info@igeekinc.com"/>
+			<env key="DEBFULLNAME" value="iGeek, Inc."/>
+			<arg value="--create"/>
+			<arg value="-v"/>
+			<arg value="${revision}-${buildRev}"/>
+			<arg value="--package"/>
+			<arg value="${debianPackageName}"/>
+			<arg value="Release ${revision} of Indelible Backup"/>
+		</exec>
+		<copy todir="${debianPackageDir}/debian">
+			<fileset dir="DebianPackageResources">
+				<include name="*"/>
+			</fileset>
+		</copy>
+		<chmod perm="+x">
+			<fileset dir="${debianPackageDir}/debian" excludes="changelog control copyright"/>
+		</chmod>
+		<mkdir dir="${debianPackageDir}/debian/source"/>
+		<copy tofile="${debianPackageDir}/debian/source/format" file="DebianPackageResources/source-format"/>
+		<exec executable="/usr/bin/debuild" dir="${debianPackageDir}" failonerror="true">
+			<arg value="--preserve-envvar=JAVA_HOME"/>
+			<arg value="-us"/>
+			<arg value="-uc"/>
+		</exec>
+	</target>
+	<target name="buildDist" depends="init, buildJar">
+	</target>
+	
+	<target name="install-debian" depends="buildDist" description="This should only be used by the Debian package build">
+		<property name="debianInstallDir" location="../debian"/> <!-- At this point, we should be inside of the Debian tree -->
+		<property name="debianPackageRoot" location="${debianInstallDir}/${debianPackageName}"/>
+		<local name="packageJarDir"/><property name="packageJarDir" location="${debianPackageRoot}/usr/share/igeek/${debianPackageName}/lib"/>
+		<local name="packageLibDir"/><property name="packageLibDir" location="${debianPackageRoot}/usr/lib/igeek/${debianPackageName}"/>
+		<local name="packageBinDir"/><property name="packageBinDir" location="${debianPackageRoot}/usr/bin"/>
+		<local name="etcDir"/><property name="etcDir" location="${debianPackageRoot}/etc"/>
+		<local name="initDir"/><property name="initDir" location="${etcDir}/init"/>
+		
+		<mkdir dir="${debianPackageRoot}"/>	<!-- The root of the simulated tree -->
+		<mkdir dir="${etcDir}"/>
+		<mkdir dir="${initDir}"/>
+		<copy todir="${initDir}">
+			<fileset dir="conf">
+				<include name="*.conf"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${packageDir}"/>
+		<mkdir dir="${packageLibDir}"/>
+		<mkdir dir="${packageJarDir}"/>
+		<mkdir dir="${packageBinDir}"/>
+		<copy todir="${packageJarDir}" includeEmptyDirs="false">
+			<fileset dir="${liboutput}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${packageLibDir}" includeEmptyDirs="false">
+			<fileset dir="${liboutput}">
+				<include name="*.so"/>
+				<include name="*.jnilib"/>
+				<include name="*.dylib"/>
+			</fileset>
+		</copy>
+		<copy todir="${packageJarDir}">
+			<fileset dir="${separateLibsOutput}" includes="*.jar"/>
+		</copy>
+		<copy todir="${packageBinDir}">
+			<fileset dir="scripts" includes="*"/>
+		</copy>
+		<chmod perm="+x">
+			<fileset dir="${packageBinDir}" includes="*"/>
+		</chmod>
+	</target>
+	
+	<target name="install-rh" depends="buildDist" description="This should only be used by the RPM package build">
+		<!--<property name="rpmInstallDir" location="../../BUILDROOT"/> At this point, we should be inside of the Debian tree -->
+		<property name="rpmPackageRoot" location="${rpmInstallDir}"/>
+		<local name="packageJarDir"/><property name="packageJarDir" location="${rpmPackageRoot}/usr/share/igeek/${debianPackageName}/lib"/>
+		<local name="packageLibDir"/><property name="packageLibDir" location="${rpmPackageRoot}/usr/lib/igeek/${debianPackageName}"/>
+		<local name="packageBinDir"/><property name="packageBinDir" location="${rpmPackageRoot}/usr/bin"/>
+		<local name="etcDir"/><property name="etcDir" location="${rpmPackageRoot}/etc"/>
+		<local name="initDir"/><property name="initDir" location="${etcDir}/init"/>
+		
+		<mkdir dir="${rpmPackageRoot}"/>	<!-- The root of the simulated tree -->
+		<mkdir dir="${etcDir}"/>
+		<mkdir dir="${initDir}"/>
+		<copy todir="${initDir}">
+			<fileset dir="conf">
+				<include name="*.conf"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${packageDir}"/>
+		<mkdir dir="${packageLibDir}"/>
+		<mkdir dir="${packageJarDir}"/>
+		<mkdir dir="${packageBinDir}"/>
+		<copy todir="${packageJarDir}" includeEmptyDirs="false">
+			<fileset dir="${liboutput}">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${packageLibDir}" includeEmptyDirs="false">
+			<fileset dir="${liboutput}">
+				<include name="*.so"/>
+				<include name="*.jnilib"/>
+				<include name="*.dylib"/>
+			</fileset>
+		</copy>
+		<copy todir="${packageJarDir}">
+			<fileset dir="${separateLibsOutput}" includes="*.jar"/>
+		</copy>
+		<copy todir="${packageBinDir}">
+			<fileset dir="scripts" includes="*"/>
+		</copy>
+		
+		<exec executable="/bin/sh" dir="${packageBinDir}" failonerror="true">
+			<arg value="-c"/>
+			<arg value="/bin/chmod +x *"/>
+		</exec>
+	</target>
+</project>

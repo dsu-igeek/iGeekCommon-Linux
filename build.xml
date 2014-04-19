@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iGeek Common Linux" default="buildJar" basedir=".">
+	<description>
+        Build file for iGeek, Inc. common library for Linux
+  	</description>
+	<import file="build-common-linux.xml"/>
+	<target name="localProperties">
+		<!-- set global properties for this build -->
+		<property name="nativesrc" location="nativesrc"/>
+		<property name="jarName" value="iGeekCommon-Linux.jar"/>
+		<property name="testsJarName" value="iGeekCommon-LinuxTests.jar"/>
+		<property name="linuxlibindelible" location="${nativesrc}/libIndelible" />
+	</target>
+
+	<target name="setupOtherProjects">
+		<addOtherProject otherProjectName="iGeekCommon" classPathRefID="localLibs"/>
+	</target>
+
+	<target name="nativeHeaders" depends="javaCompile, init">
+		<javah destdir="${nativeHeaders}">
+			<classpath>
+				<pathelement location="${javaObjs}"/>
+				<path refid="libs"/>
+			</classpath>
+			<class name="com.igeekinc.util.linux.nativeifs.LinuxNativeFileRoutines"/>
+		</javah>
+	</target>
+
+	<target name="libIndelible" depends="nativeHeaders">
+		<cc outfile="${liboutput}/Indelible" objdir="${objs}" outtype="plugin">
+			<compiler refid="linuxCompile"/>
+			<linker refid="linuxLinker"/>
+			<includepath location="${nativeHeaders}"/>
+			<fileset dir="${linuxlibindelible}" includes="**/*.c"/>
+		</cc>
+	</target>
+	
+	<target name="buildJar" depends="init, otherBuilds, javaCompile, libIndelible, iGeekBuildCommon.buildJar"/>
+</project>
