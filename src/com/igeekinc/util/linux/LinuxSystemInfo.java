@@ -52,6 +52,7 @@ import com.igeekinc.util.fileinfo.FileInfoDBManager;
 import com.igeekinc.util.fsevents.FSEventsProcessor;
 import com.igeekinc.util.linux.nativeifs.LibC;
 import com.igeekinc.util.logging.ErrorLogMessage;
+import com.igeekinc.util.msgpack.ClientFileMetaDataMsgPack;
 import com.igeekinc.util.scripting.ScriptExecutor;
 import com.igeekinc.util.xmlserial.XMLObjectParseHandler;
 import com.igeekinc.util.xmlserial.XMLObjectSerializeHandler;
@@ -504,5 +505,10 @@ public class LinuxSystemInfo extends SystemInfo
 	public Class<? extends XMLObjectParseHandler<? extends ClientFileMetaData>> getMetaDataParserClass()
 	{
 		return LinuxFileMetaDataParseHandler.class;
+	}
+	@Override
+	public Class<? extends ClientFileMetaDataMsgPack> getMetaDataMsgPackSerializer()
+	{
+		return LinuxFileMetaDataMsgPack.class;
 	}
 }

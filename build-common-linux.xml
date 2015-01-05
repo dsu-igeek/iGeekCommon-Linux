@@ -90,6 +90,7 @@
 			</fileset>
 			<filterset>
 				<filter token="REVISION" value="${revision}"/>
+				<filter token="BUILD" value="${buildRev}"/>
 			</filterset>
 		</copy>
 		<exec executable="/usr/bin/rpmbuild" failonerror="true">

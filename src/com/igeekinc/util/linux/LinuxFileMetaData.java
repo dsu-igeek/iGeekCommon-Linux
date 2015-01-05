@@ -23,6 +23,7 @@ import com.igeekinc.util.ClientFileMetaData;
 import com.igeekinc.util.SystemInfo;
 import com.igeekinc.util.User;
 import com.igeekinc.util.exceptions.ForkNotFoundException;
+import com.igeekinc.util.msgpack.ClientFileMetaDataMsgPack;
 import com.igeekinc.util.unix.UnixDate;
 
 public class LinuxFileMetaData extends ClientFileMetaData implements Serializable
@@ -484,5 +485,11 @@ public class LinuxFileMetaData extends ClientFileMetaData implements Serializabl
 	        		return false;
 	        }
 	        return true;
-	    }	
+	    }
+	    
+		@Override
+		public ClientFileMetaDataMsgPack getMDMsgPack()
+		{
+			return new LinuxFileMetaDataMsgPack(this);
+		}	
 }

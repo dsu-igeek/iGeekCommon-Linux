@@ -17,7 +17,7 @@
 package com.igeekinc.util.linux;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 import com.igeekinc.util.ClientFileMetaData;
 import com.igeekinc.util.ClientFileMetaDataProperties;
@@ -29,7 +29,7 @@ public class LinuxFileMetaDataProperties extends ClientFileMetaDataProperties
         super(md);
     }
 
-    public LinuxFileMetaDataProperties(HashMap<String, Object>map)
+    public LinuxFileMetaDataProperties(Map<String, Object>map)
     {
     	super(map);
     }

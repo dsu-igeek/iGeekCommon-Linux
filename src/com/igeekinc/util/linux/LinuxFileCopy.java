@@ -55,13 +55,12 @@ public class LinuxFileCopy extends FileCopy
 		boolean compressDestination,
 		boolean copyMetaData,
 		PauserControlleeIF pauser,
-		FileCopyProgressIndicator progress)
+		FileCopyProgressIndicatorIF progress)
 		throws IOException, AbortedException
-	{
-
-			copyToFile((LinuxClientFile)source, decompressSource, (LinuxClientFile)destination, compressDestination, copyMetaData,
-					pauser, progress);
-	}
+		{
+		copyToFile((LinuxClientFile)source, decompressSource, (LinuxClientFile)destination, compressDestination, copyMetaData,
+				pauser, progress);
+		}
 	
 
 	/**
@@ -83,7 +82,7 @@ public class LinuxFileCopy extends FileCopy
 			boolean compressDestination,
 			boolean copyMetaData,
 			PauserControlleeIF pauser,
-			FileCopyProgressIndicator progress)
+			FileCopyProgressIndicatorIF progress)
 	throws IOException, AbortedException
 	{
 		InputStream sourceStream;
@@ -193,61 +192,52 @@ public class LinuxFileCopy extends FileCopy
             PauserControlleeIF pauser, FileCopyProgressIndicator progress)
             throws IOException, AbortedException
     {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException();
     }
-	@Override
-	public void copyFile(ClientFile source, boolean decompressSource,
-			ClientFile destination, boolean compressDestination,
-			boolean copyMetaData, PauserControlleeIF pauser,
-			FileCopyProgressIndicatorIF progress) throws IOException,
-			AbortedException {
-		// TODO Auto-generated method stub
-		
-	}
+
 	@Override
 	public void copyFile(ClientFile source, boolean decompressSource,
 			SplitFileDescriptor destination, boolean compressDestination,
 			boolean copyMetaData, PauserControlleeIF pauser,
 			FileCopyProgressIndicatorIF progress) throws IOException,
-			AbortedException {
-		// TODO Auto-generated method stub
-		
+			AbortedException 
+	{
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void copyFile(SplitFileDescriptor source, boolean decompressSource,
 			ClientFile destination, boolean compressDestination,
 			boolean copyMetaData, PauserControlleeIF pauser,
 			FileCopyProgressIndicatorIF progress) throws IOException,
-			AbortedException {
-		// TODO Auto-generated method stub
-		
+			AbortedException
+	{
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void decryptFile(ClientFile source, boolean decompressSource,
 			PrivateKey unlockKey, ClientFile destination, boolean copyMetaDate,
 			PauserControlleeIF pauser, FileCopyProgressIndicatorIF progress)
-			throws IOException, AbortedException {
-		// TODO Auto-generated method stub
-		
+			throws IOException, AbortedException 
+	{
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void decryptFile(SplitFileDescriptor source,
 			boolean decompressSource, PrivateKey unlockKey,
 			ClientFile destination, boolean copyMetaDate,
 			PauserControlleeIF pauser, FileCopyProgressIndicatorIF progress)
-			throws IOException, AbortedException {
-		// TODO Auto-generated method stub
-		
+			throws IOException, AbortedException 
+	{
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void encryptFile(ClientFile source, ClientFile destination,
 			PublicKey publicKey, Key fileKey, boolean compressDestination,
 			boolean copyMetaData, PauserControlleeIF pauser,
 			FileCopyProgressIndicatorIF progress) throws IOException,
-			AbortedException {
-		// TODO Auto-generated method stub
-		
+			AbortedException 
+	{
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void encryptFile(ClientFile source, SplitFileDescriptor destination,
@@ -278,8 +268,7 @@ public class LinuxFileCopy extends FileCopy
 			PauserControlleeIF pauser, FileCopyProgressIndicatorIF progress)
 			throws IOException, AbortedException
 	{
-		// TODO Auto-generated method stub
-		
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void encryptFile(String fileName, FilePackage filePackage,
@@ -288,8 +277,7 @@ public class LinuxFileCopy extends FileCopy
 			PauserControlleeIF pauser, FileCopyProgressIndicatorIF progress)
 			throws IOException, AbortedException
 	{
-		// TODO Auto-generated method stub
-		
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void decryptFile(FilePackage source, boolean decompressSource,
@@ -297,8 +285,7 @@ public class LinuxFileCopy extends FileCopy
 			PauserControlleeIF pauser, FileCopyProgressIndicatorIF progress)
 			throws IOException, AbortedException
 	{
-		// TODO Auto-generated method stub
-		
+        throw new UnsupportedOperationException();
 	}
 	@Override
 	public void copyFile(FilePackage filePackage, boolean decompressSource,
@@ -307,7 +294,6 @@ public class LinuxFileCopy extends FileCopy
 			FileCopyProgressIndicatorIF progress) throws IOException,
 			AbortedException
 	{
-		// TODO Auto-generated method stub
-		
+        throw new UnsupportedOperationException();
 	}
 }

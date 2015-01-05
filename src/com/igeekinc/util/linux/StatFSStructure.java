@@ -16,112 +16,69 @@
 package com.igeekinc.util.linux;
 
 import com.igeekinc.util.BitTwiddle;
+import com.igeekinc.util.BufferStructure;
 import com.igeekinc.util.SystemInfo;
 
-public class StatFSStructure
-{
-	
-	public static final int  f_typeOffset = 0;
-	public static final int  f_bsizeOffset = f_typeOffset+SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_blocksOffset = f_bsizeOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_bfreeOffset = f_blocksOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_bavailOffset = f_bfreeOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_filesOffset = f_bavailOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_ffreeOffset = f_filesOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_fsidOffset = f_ffreeOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int	 f_namelenOffset = f_fsidOffset + (SystemInfo.getSystemInfo().getNativeLongSize() * 2);
-	public static final int  f_frsizeOffset = f_namelenOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_flagsOffset = f_frsizeOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  f_spareOffset = f_flagsOffset + SystemInfo.getSystemInfo().getNativeLongSize();
-	public static final int  fsstatBufSize = f_spareOffset + (SystemInfo.getSystemInfo().getNativeLongSize()*4) /*reserved space */;
-	
-	public int    f_type;    /* type of file system (reserved: zero) */
-	public int    f_bsize;    /* fundamental file system block size */
-	public int    f_blocks;   /* total data blocks in file system */
-	public int    f_bfree;    /* free blocks in fs */
-	public int    f_bavail;   /* free blocks avail to non-superuser */
-	public int    f_files;    /* total file nodes in file system */
-	public int    f_ffree;    /* free file nodes in fs */
-	public int    f_fsid;     /* file system id (super-user only) */
-	public int    f_namelen;
-	
+public abstract class StatFSStructure extends BufferStructure
+{	
 	public StatFSStructure()
 	{
-		
+		super(null, 0, 0);
 	}
-	public StatFSStructure(byte [] data, int offset)
+	
+	public StatFSStructure(byte [] buffer, int offset)
 	{
-		f_type = BitTwiddle.nativeByteArrayToInt(data, offset + f_typeOffset);
-		f_bsize = BitTwiddle.nativeByteArrayToInt(data, offset + f_bsizeOffset);
-		f_blocks = BitTwiddle.nativeByteArrayToInt(data, offset + f_blocksOffset);
-		f_bfree = BitTwiddle.nativeByteArrayToInt(data, offset + f_bfreeOffset);
-		f_bavail = BitTwiddle.nativeByteArrayToInt(data, offset + f_bavailOffset);
-		f_files = BitTwiddle.nativeByteArrayToInt(data, offset + f_filesOffset);
-		f_fsid = BitTwiddle.nativeByteArrayToInt(data, offset + f_fsidOffset);
-		f_ffree = BitTwiddle.nativeByteArrayToInt(data, offset + f_ffreeOffset);
-		f_namelen = BitTwiddle.nativeByteArrayToInt(data, offset + f_namelenOffset);
+		super(buffer, offset, buffer.length - offset);
 	}
-	/**
-	 * @return Returns the fsstatBufSize.
-	 */
-	public static int getFsstatBufSize()
+	
+	public static StatFSStructure getStatFSStructure(byte [] data, int offset)
 	{
-		return fsstatBufSize;
+		if (SystemInfo.is32BitVM())
+			return new StatFSStructure32(data, offset);
+		else
+			return new StatFSStructure64(data, offset);
 	}
-
+	
+	public static int getBufferSize()
+	{
+		if (SystemInfo.is32BitVM())
+			return StatFSStructure32.getBufferSize32();
+		else
+			return StatFSStructure64.getBufferSize64();
+	}
+	
 	/**
 	 * @return Returns the f_bavail.
 	 */
-	public long getF_bavail()
-	{
-		return f_bavail;
-	}
+	public abstract long getF_bavail();
 
 	/**
 	 * @return Returns the f_bfree.
 	 */
-	public long getF_bfree()
-	{
-		return f_bfree;
-	}
+	public abstract long getF_bfree();
 
 	/**
 	 * @return Returns the f_blocks.
 	 */
-	public long getF_blocks()
-	{
-		return f_blocks;
-	}
+	public abstract long getF_blocks();
 
 	/**
 	 * @return Returns the f_bsize.
 	 */
-	public long getF_bsize()
-	{
-		return f_bsize;
-	}
+	public abstract long getF_bsize();
 
 	/**
 	 * @return Returns the f_ffree.
 	 */
-	public long getF_ffree()
-	{
-		return f_ffree;
-	}
+	public abstract long getF_ffree();
 
 	/**
 	 * @return Returns the f_files.
 	 */
-	public long getF_files()
-	{
-		return f_files;
-	}
+	public abstract long getF_files();
 
 	/**
 	 * @return Returns the f_fsid.
 	 */
-	public long getF_fsid()
-	{
-		return f_fsid;
-	}
+	public abstract long getF_fsid();
 }

@@ -379,10 +379,9 @@ public class LinuxVolume extends Volume
 	{
 		StatFSStructure statFS;
 		loadCore();
-		byte [] statBuf = new byte[StatFSStructure.fsstatBufSize];
+		byte [] statBuf = new byte[StatFSStructure.getBufferSize()];
 		nativeFileUtil.statfs(volumePath, statBuf);
-		statFS = new StatFSStructure(statBuf, 0);
-		//nativeFileUtil.statfs(volumePath, statFS);
+		statFS = StatFSStructure.getStatFSStructure(statBuf, 0);
 		return statFS.getF_bfree() * statFS.getF_bsize();
 	}
 
@@ -390,9 +389,9 @@ public class LinuxVolume extends Volume
 	{
 		StatFSStructure statFS;
 		loadCore();
-		byte [] statBuf = new byte[StatFSStructure.fsstatBufSize];
+		byte [] statBuf = new byte[StatFSStructure.getBufferSize()];
 		nativeFileUtil.statfs(volumePath, statBuf);
-		statFS = new StatFSStructure(statBuf, 0);
+		statFS = StatFSStructure.getStatFSStructure(statBuf, 0);
 		return statFS.getF_blocks() * statFS.getF_bsize();
 	}
 

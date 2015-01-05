@@ -289,11 +289,12 @@ public class LinuxVolumeManager extends VolumeManager  implements Runnable
 					String passNo = mountTokenizer.nextToken();
 
 					FilePath mountPath = FilePath.getFilePath(mountPoint);
-					byte [] fsInfoBuf = new byte[StatFSStructure.fsstatBufSize];
+					byte [] fsInfoBuf = new byte[StatFSStructure.getBufferSize()];
 					byte [] statBuf = new byte[StatStructure.getBufferSize()];
 					if (nativeRoutines.statfs(mountPoint, fsInfoBuf) == 0)
 					{
-						StatFSStructure curStatFS = new StatFSStructure(fsInfoBuf,  0);
+						StatFSStructure curStatFS = StatFSStructure.getStatFSStructure(fsInfoBuf,  0);
+						
 						if (nativeRoutines.lstat(mountPoint, statBuf) == 0)
 						{
 							StatStructure mountStatStructure = StatStructure.getStatStructure(statBuf);
