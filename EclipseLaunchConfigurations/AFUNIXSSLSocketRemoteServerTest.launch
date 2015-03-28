@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
+<stringAttribute key="bad_container_name" value="/iGeekCommon-"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/iGeekCommon/test/com/igeekinc/firehose/AFUNIXSSLSocketRemoteServerTest.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
+<booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+<stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
+<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit3"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.igeekinc.firehose.AFUNIXSSLSocketRemoteServerTest"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="iGeekCommon-Linux"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx4096m -Djdbc.drivers=org.postgresql.Driver -Djava.library.path=${workspace_loc:IndelibleFS-Linux}/output/lib:${workspace_loc:iGeekCommon-Linux}/output/lib:${workspace_loc:junixsocket}/lib-native/org/newsclub/net/unix"/>
+</launchConfiguration>
