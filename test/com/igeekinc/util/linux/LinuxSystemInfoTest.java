@@ -18,8 +18,10 @@ package com.igeekinc.util.linux;
 
 import java.util.Date;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import com.igeekinc.util.EthernetID;
 import com.igeekinc.util.Group;
 import com.igeekinc.util.SystemInfo;
 import com.igeekinc.util.User;
@@ -35,12 +37,12 @@ public class LinuxSystemInfoTest extends TestCase
     
     public void testgetUserInfoForUID() throws UserNotFoundException
     {
-        User userInfo = ((LinuxSystemInfo)SystemInfo.getSystemInfo()).getUserInfoForUID(500);
+        User userInfo = ((LinuxSystemInfo)SystemInfo.getSystemInfo()).getUserInfoForUID(0);
     }
     
     public void testgetGroupInfoForGID() throws GroupNotFoundException
     {
-        Group groupInfo = ((LinuxSystemInfo)SystemInfo.getSystemInfo()).getGroupInfoForGID(29);
+        Group groupInfo = ((LinuxSystemInfo)SystemInfo.getSystemInfo()).getGroupInfoForGID(0);
         System.out.println(groupInfo);
     }
     
@@ -48,5 +50,12 @@ public class LinuxSystemInfoTest extends TestCase
     {
         Date bootTime = ((LinuxSystemInfo)SystemInfo.getSystemInfo()).getSystemBootTime();
         System.out.println("bootTime = "+bootTime);
+    }
+    
+    public void testGetEthernetID()
+    {
+    	EthernetID ethernetID = ((LinuxSystemInfo)SystemInfo.getSystemInfo()).getEthernetID();
+    	Assert.assertNotNull(ethernetID);
+    	System.out.println("ethernet id = " + ethernetID);
     }
 }

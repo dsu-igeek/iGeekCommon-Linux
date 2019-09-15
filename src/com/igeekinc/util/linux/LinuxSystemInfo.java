@@ -122,6 +122,15 @@ public class LinuxSystemInfo extends SystemInfo
           returnID = new EthernetID(addr);
           return(returnID);  // We'll just take the first one we find
         }
+        if (curLine.indexOf("ether") >= 0)
+        {
+            String  addr;
+
+            addr = curLine.substring(curLine.indexOf("ether")+6).trim();
+            addr = addr.substring(0, addr.indexOf(" "));
+            returnID = new EthernetID(addr);
+            return(returnID);  // We'll just take the first one we find
+        }
       }
     }
     catch (Exception e)
